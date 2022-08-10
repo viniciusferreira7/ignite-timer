@@ -19,16 +19,23 @@ const newCycleFormValidationScheme = zod.object({
   minutesAmount: zod.number().min(5).max(60),
 })
 
+type newCycleFormData = zod.infer<typeof newCycleFormValidationScheme>
+
 export function Home() {
-  const { register, handleSubmit, watch, formState } = useForm({
+  const { register, handleSubmit, watch, reset } = useForm<newCycleFormData>({
     resolver: zodResolver(newCycleFormValidationScheme),
+    defaultValues: {
+      task: '',
+      minutesAmount: 0,
+    },
   })
 
-  function handleCreateNewCycle(data: any) {
-    console.log(data)
+  function handleCreateNewCycle(data: newCycleFormData) {
+    reset({
+      task: '',
+      minutesAmount: 0,
+    })
   }
-
-  console.log(formState.errors)
 
   const task = watch('task')
   const isSubmitTask = !task
@@ -75,7 +82,7 @@ export function Home() {
           <span>0</span>
         </CountDownContainer>
 
-        <StarCountDownButton type="submit">
+        <StarCountDownButton type="submit" disabled={isSubmitTask}>
           <Play size={24} />
           Começar
         </StarCountDownButton>
