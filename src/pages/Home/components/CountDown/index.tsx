@@ -1,6 +1,7 @@
 import { differenceInSeconds } from 'date-fns'
 import { HandPalm, Play } from 'phosphor-react'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { CycleContext } from '../..'
 import {
   CountDownContainer,
   Separator,
@@ -16,6 +17,9 @@ interface CountDownProps {
 }
 
 export function CountDown() {
+  const { activeCycle, activeCycleId, markCurrentCycleAsFinished } =
+    useContext(CycleContext)
+
   const [amountSecondPassed, setAmountSecondPassed] = useState(0)
 
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
@@ -31,15 +35,7 @@ export function CountDown() {
         )
 
         if (secondsDiference >= totalSeconds) {
-          setCycles((state) =>
-            state.map((cycle) => {
-              if (cycle.id === activeCycleId) {
-                return { ...cycle, finishedDate: new Date() }
-              } else {
-                return cycle
-              }
-            }),
-          )
+          markCurrentCycleAsFinished()
           setAmountSecondPassed(totalSeconds)
           clearInterval(interval)
         } else {
@@ -51,7 +47,21 @@ export function CountDown() {
     return () => {
       clearInterval(interval)
     }
-  }, [activeCycle, totalSeconds, activeCycleId, cycles])
+  }, [activeCycle, totalSeconds, activeCycleId, markCurrentCycleAsFinished])
+
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
+
+  const minutesAmount = Math.floor(currentSeconds / 60)
+  const secondsAmount = currentSeconds % 60
+
+  const minutes = String(minutesAmount).padStart(2, '0')
+  const seconds = String(secondsAmount).padStart(2, '0')
+
+  useEffect(() => {
+    if (activeCycleId) {
+      document.title = `Ignite Timer ${minutes}:${seconds}`
+    }
+  }, [activeCycleId, seconds, minutes])
 
   return (
     <>

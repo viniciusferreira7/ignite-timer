@@ -21,6 +21,8 @@ interface Cycle {
 
 interface CycleContextType {
   activeCycle: Cycle | undefined
+  activeCycleId: string | null
+  markCurrentCycleAsFinished: () => void
 }
 
 export const CycleContext = createContext({} as CycleContextType)
@@ -62,32 +64,29 @@ export function Home() {
     setActiveCycleId(null)
   }
 
-  const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
-
-  const minutesAmount = Math.floor(currentSeconds / 60)
-  const secondsAmount = currentSeconds % 60
-
-  const minutes = String(minutesAmount).padStart(2, '0')
-  const seconds = String(secondsAmount).padStart(2, '0')
+  function markCurrentCycleAsFinished() {
+    setCycles((state) =>
+      state.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return { ...cycle, finishedDate: new Date() }
+        } else {
+          return cycle
+        }
+      }),
+    )
+  }
 
   const task = watch('task')
   const isSubmitTask = !task
 
-  useEffect(() => {
-    if (activeCycleId) {
-      document.title = `Ignite Timer ${minutes}:${seconds}`
-    }
-  }, [activeCycleId, seconds, minutes])
-
   return (
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)}>
-        <CycleContext.Provider value={{ activeCycle }}>
+        <CycleContext.Provider
+          value={{ activeCycle, activeCycleId, markCurrentCycleAsFinished }}
+        >
           <NewCycleForm />
-          <CountDown
-            handleInterruptCycle={handleInterruptCycle}
-            isSubmitTask={isSubmitTask}
-          />
+          <CountDown />
         </CycleContext.Provider>
       </form>
     </HomeContainer>
