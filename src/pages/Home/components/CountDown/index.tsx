@@ -1,6 +1,6 @@
 import { differenceInSeconds } from 'date-fns'
 import { HandPalm, Play } from 'phosphor-react'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { CycleContext } from '../..'
 import {
   CountDownContainer,
@@ -8,19 +8,17 @@ import {
   StartCountDownButton,
   StopCountDownButton,
 } from './styles'
-interface CountDownProps {
-  minutes: string
-  seconds: string
-  activeCycle: Cycle | undefined
-  handleInterruptCycle: () => void
-  isSubmitTask: boolean
-}
 
 export function CountDown() {
-  const { activeCycle, activeCycleId, markCurrentCycleAsFinished } =
-    useContext(CycleContext)
-
-  const [amountSecondPassed, setAmountSecondPassed] = useState(0)
+  const {
+    activeCycle,
+    activeCycleId,
+    amountSecondPassed,
+    getAmountSecondPassed,
+    markCurrentCycleAsFinished,
+    handleInterruptCycle,
+    isSubmitTask,
+  } = useContext(CycleContext)
 
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
@@ -36,10 +34,10 @@ export function CountDown() {
 
         if (secondsDiference >= totalSeconds) {
           markCurrentCycleAsFinished()
-          setAmountSecondPassed(totalSeconds)
+          getAmountSecondPassed(totalSeconds)
           clearInterval(interval)
         } else {
-          setAmountSecondPassed(secondsDiference)
+          getAmountSecondPassed(secondsDiference)
         }
       }, 1000)
     }
@@ -47,7 +45,13 @@ export function CountDown() {
     return () => {
       clearInterval(interval)
     }
-  }, [activeCycle, totalSeconds, activeCycleId, markCurrentCycleAsFinished])
+  }, [
+    activeCycle,
+    totalSeconds,
+    activeCycleId,
+    markCurrentCycleAsFinished,
+    getAmountSecondPassed,
+  ])
 
   const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
 
