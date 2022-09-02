@@ -1,7 +1,7 @@
 import { differenceInSeconds } from 'date-fns'
 import { HandPalm, Play } from 'phosphor-react'
 import { useContext, useEffect } from 'react'
-import { CycleContext } from '../..'
+import { CycleContext } from '../../../../contexts/CycleContext'
 import {
   CountDownContainer,
   Separator,
@@ -14,7 +14,7 @@ export function CountDown() {
     activeCycle,
     activeCycleId,
     amountSecondPassed,
-    getAmountSecondPassed,
+    setSecondPassed,
     markCurrentCycleAsFinished,
     handleInterruptCycle,
     isSubmitTask,
@@ -34,10 +34,10 @@ export function CountDown() {
 
         if (secondsDiference >= totalSeconds) {
           markCurrentCycleAsFinished()
-          getAmountSecondPassed(totalSeconds)
+          setSecondPassed(totalSeconds)
           clearInterval(interval)
         } else {
-          getAmountSecondPassed(secondsDiference)
+          setSecondPassed(secondsDiference)
         }
       }, 1000)
     }
@@ -50,7 +50,7 @@ export function CountDown() {
     totalSeconds,
     activeCycleId,
     markCurrentCycleAsFinished,
-    getAmountSecondPassed,
+    setSecondPassed,
   ])
 
   const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
