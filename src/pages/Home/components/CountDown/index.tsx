@@ -9,15 +9,18 @@ import {
   StopCountDownButton,
 } from './styles'
 
-export function CountDown() {
+interface CountDownProps {
+  isSubmitTask: boolean | undefined
+}
+
+export function CountDown({ isSubmitTask }: CountDownProps) {
   const {
     activeCycle,
     activeCycleId,
     amountSecondPassed,
     setSecondPassed,
     markCurrentCycleAsFinished,
-    handleInterruptCycle,
-    isSubmitTask,
+    interruptCurrentCycle,
   } = useContext(CycleContext)
 
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
@@ -77,7 +80,7 @@ export function CountDown() {
         <span>{seconds[1]}</span>
       </CountDownContainer>
       {activeCycle ? (
-        <StopCountDownButton type="button" onClick={handleInterruptCycle}>
+        <StopCountDownButton type="button" onClick={interruptCurrentCycle}>
           <HandPalm size={24} />
           Interromper
         </StopCountDownButton>

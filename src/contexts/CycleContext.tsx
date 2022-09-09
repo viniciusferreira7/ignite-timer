@@ -1,5 +1,9 @@
 import { createContext, ReactNode, useState } from 'react'
-import { newCycleFormData } from '../pages/Home'
+
+interface createCycleData {
+  task: string
+  minutesAmount: number
+}
 
 interface Cycle {
   id: string
@@ -11,26 +15,30 @@ interface Cycle {
 }
 
 interface CycleContextType {
+  cycles: Cycle[]
   activeCycle: Cycle | undefined
   activeCycleId: string | null
   amountSecondPassed: number
   setSecondPassed: (amount: number) => void
   markCurrentCycleAsFinished: () => void
-  handleInterruptCycle: () => void
-  handleCreateNewCycle: (data: newCycleFormData) => void
-  isSubmitTask: boolean | undefined
+  interruptCurrentCycle: () => void
+  createNewCycle: (data: createCycleData) => void
 }
 
 export const CycleContext = createContext({} as CycleContextType)
 
-export function CycleContextProvider({ children }: { children: ReactNode }) {
+interface CycleContextProviderProps {
+  children: ReactNode
+}
+
+export function CycleContextProvider({ children }: CycleContextProviderProps) {
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
   const [amountSecondPassed, setAmountSecondPassed] = useState(0)
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
-  function handleInterruptCycle() {
+  function interruptCurrentCycle() {
     setCycles((state) =>
       state.map((cycle) => {
         if (cycle.id === activeCycleId) {
@@ -43,7 +51,7 @@ export function CycleContextProvider({ children }: { children: ReactNode }) {
     setActiveCycleId(null)
   }
 
-  function handleCreateNewCycle(data: newCycleFormData) {
+  function createNewCycle(data: createCycleData) {
     const id = String(new Date().getTime())
 
     const newCycle: Cycle = {
@@ -82,14 +90,14 @@ export function CycleContextProvider({ children }: { children: ReactNode }) {
   return (
     <CycleContext.Provider
       value={{
+        cycles,
         activeCycle,
         activeCycleId,
         amountSecondPassed,
-        handleInterruptCycle,
-        handleCreateNewCycle,
+        createNewCycle,
+        interruptCurrentCycle,
         markCurrentCycleAsFinished,
         setSecondPassed,
-        isSubmitTask,
       }}
     >
       {children}
