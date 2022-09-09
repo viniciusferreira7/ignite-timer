@@ -65,10 +65,6 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
     setActiveCycleId(id)
 
     setAmountSecondPassed(0)
-
-    // if (reset) {
-    //   reset()
-    // }
   }
 
   function markCurrentCycleAsFinished() {
