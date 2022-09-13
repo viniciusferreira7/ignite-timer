@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/esm/locale'
 import { useContext } from 'react'
 import { CycleContext } from '../../contexts/CycleContext'
 import { HistoryContainer, HistoryList, Status } from './styles'
@@ -28,7 +29,10 @@ export function History() {
                   <td>{cycle.task}</td>
                   <td>{cycle.minutesAmount} minutos</td>
                   <td>
-                    {formatDistanceToNow(cycle.startDate, { locale: eoLocale })}
+                    {formatDistanceToNow(cycle.startDate, {
+                      addSuffix: true,
+                      locale: ptBR,
+                    })}
                   </td>
                   <td>
                     {!cycle.interruptedDate && !cycle.finishedDate && (
