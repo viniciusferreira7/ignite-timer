@@ -37,12 +37,13 @@ interface CyclesState {
 }
 
 export function CycleContextProvider({ children }: CycleContextProviderProps) {
-  const [cycles, dispatch] = useReducer(
+  const [cyclesState, dispatch] = useReducer(
     (state: CyclesState, action: any) => {
       if (action.type === 'ADD_NEW_CYCLE') {
         return {
           ...state,
           cycles: [...state.cycles, action.payload.newCycle],
+          activeCycleId: action.payload.newCycle.id,
         }
       }
 
@@ -53,8 +54,9 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
       activeCycleId: null,
     },
   )
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
   const [amountSecondPassed, setAmountSecondPassed] = useState(0)
+
+  const { cycles, activeCycleId } = cyclesState
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
@@ -94,7 +96,6 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
         newCycle,
       },
     })
-    setActiveCycleId(id)
 
     setAmountSecondPassed(0)
   }
